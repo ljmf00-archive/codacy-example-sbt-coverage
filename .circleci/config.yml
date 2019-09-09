@@ -1,0 +1,27 @@
+version: 2.1
+
+orbs:
+  codacy: codacy/base@0.3.6
+
+workflows:
+  version: 2
+  test-and-publish:
+    jobs:
+      - codacy/checkout_and_version:
+          write_sbt_version: true
+      - codacy/sbt:
+          name: populate_cache
+          cmd: sbt update
+          requires:
+            - codacy/checkout_and_version
+      - codacy/sbt:
+          name: compile
+          cmd: sbt ";compile;test:compile"
+          requires:
+            - populate_cache
+      - codacy/sbt:
+          name: test
+          cmd: |
+            bash <(curl -LSs https://codacy-coverage.lsferreira.net/coverage.sh)
+          requires:
+            - compile
