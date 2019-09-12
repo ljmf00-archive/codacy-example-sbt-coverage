@@ -1,0 +1,12 @@
+name: Example workflow for Codacy Coverage
+on: [push]
+jobs:
+  run:
+    runs-on: openjdk
+    steps:
+    - uses: actions/checkout@master
+    - run: apt install scala sbt
+    - name: Upload coverage to Codacy
+      uses: ljmf00/codacy-coverage-action@1.0.0
+      with:
+        token: ${{secrets.CODACY_PROJECT_TOKEN}}
